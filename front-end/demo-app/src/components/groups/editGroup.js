@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
-import { Redirect } from 'react-router-dom';
+import { Link,Redirect } from 'react-router-dom';
+
 
 class EditGroup extends React.Component {
     constructor(props) {
@@ -12,16 +13,24 @@ class EditGroup extends React.Component {
             posts: this.props.location.state.group.group.posts,
             events: this.props.location.state.group.group.events,
             allEmployees:this.props.location.state.allEmployees,
-            updatedMembersList: []
+            updatedMembersList: [],
+            group:this.props.location.state.group.group
         }
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChangeText = this.handleChangeText.bind(this);
         this.handlePrivacy = this.handlePrivacy.bind(this);
         this.handleChange= this.handleChange.bind(this);
-        this.handleAdd=this.handleAdd.bind(this);
+        this.handleRemove=this.handleRemove.bind(this);
     }
 
-    
+    handleRemove(event){
+        this.state.updatedMembersList.forEach((memberID)=>{
+            if(memberID==event.target.value){
+                this.state.updatedMembersList.splice((this.state.updatedMembersList.indexOf(memberID)))
+            }
+        });
+        console.log(this.state.updatedMembersList,'updatedlistOFsplice')
+    }
     handleChangeText(event) {
         event.preventDefault();
         this.setState({
@@ -43,10 +52,10 @@ class EditGroup extends React.Component {
         event.preventDefault();
         let submitValue={
             groupName:this.state.nameOfGroup,
-            members:this.state.members,
+            members:this.state.updatedMembersList,
             privacy:this.state.privacy
         }
-        console.log(submitValue);
+        console.log(submitValue,"submitvalue");
         axios.put(`http://localhost:3001/groups/${this.props.match.params.id}`, submitValue).then((response) => {
             this.setState({
                 redirect: true
@@ -61,6 +70,7 @@ class EditGroup extends React.Component {
         }
         return (
             <div>
+                {console.log(this.props.location.state.group.group._id,"iiiiiiiiiiiiii")}
                 <form onSubmit={this.handleSubmit}>
                     <label>
                         {console.log(this.props.location.state.allEmployees, "allemps")}
@@ -72,27 +82,45 @@ class EditGroup extends React.Component {
                                         <option value="private">Private </option>
                                         <option value="public">public</option></select><br /></div>
                     </label>
-                    {/* {need to impliment for members it must show remove or show add button} */}
-                    {/* <label>{console.log(this.state.members, "members")}
-                        Remove/Existing Members:
-                        {this.state.members.map((member) => {
-                         this.state.allEmployees.map((employee, index) => {
-                             if(member==employee){
-                            return <div key={index}><input onChange={this.handleChange} key={index} type="checkbox" value={member._id}/>{member.bio.firstName}<br/></div>
-                             }else{
-                                return <div key={index}><input onChange={this.handleChange} key={index} type="checkbox" value={member._id}/>{member.bio.firstName}<br/></div>
-                             }
-                         })
-                        })}
-                    </label> */}
-                    {/* <label>
-                        Add New Membbers:{this.state.allEmployees.map((nonMember,index)=>{
-                            return <div key={index}><input onChange={this.handleAdd} key={index} type="checkbox" value={nonMember._id}/>{nonMember.bio.firstName}<br/></div>
-                        })}
-                    </label> */}
+                    <label>
+                         All Members:
+                        
+                    {this.state.allEmployees.map((employee, index) => {
+
+                        if(this.state.members.length==0){
+                            console.log("1");
+                           return this.state.allEmployees.map((nonMember)=>{
+                                return <div key={index}><input onChange={this.handleChange} key={index} type="checkbox" value={nonMember._id}/>{nonMember.bio.firstName}<br/></div>
+                            })
+                        }else{
+                             return this.state.members.map((member) => {
+                                 if(member._id==employee._id){
+                                    console.log("2");
+                                     console.log(member,employee,"if");
+
+
+                                     if(this.state.updatedMembersList.find(elements=>elements._id==employee._id))
+                                     this.state.updatedMembersList.push(employee._id)
+                                     console.log(this.state.updatedMembersList);
+
+                                        return (<div key={index}><input onClick={this.handleRemove} key={index}                     type="checkbox" value={member._id}/>Remove:{member.bio.firstName}<br/></div>)
+
+                                    }else{
+                                        console.log("3");
+
+                                        console.log(employee,"else");
+                                            return <div key={index}><input onChange={this.handleChange} key={index} type="checkbox" value={employee._id}/>{employee.bio.firstName}<br/></div>
+                                    }
+                                })
+                            }
+                        })
+                    
+                        }
+                    </label>
                     
                     <br/><br/>
-                    <input type="submit" value="submit"/>
+                    <input type="submit" value="submit"/><br/><br/>
+                    <Link to="/groups">back</Link>
                 </form>
             </div>
         )
