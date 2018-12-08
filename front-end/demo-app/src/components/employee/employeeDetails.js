@@ -43,9 +43,14 @@ class EmployeeDetails extends React.Component {
         }
             return (
                 <div>
+                    {console.log(this.state.employeeDetails.groups)}
+                    {this.state.employeeDetails.bio.firstName}<br/>
+                    {this.state.employeeDetails.bio.lastName}<br/>
+                    {this.state.employeeDetails.groups}<br/>
+                    {this.state.employeeDetails.groups.groupName}<br/>
                     {this.state.employeeDetails.bio.department.departmentName}<br/>
                     {console.log(this.state.employeeDetails.bio.department.departmentName)}
-                    {this.state.employeeDetails.bio.firstName} <br/><br/>
+                     <br/><br/>
 
                     <Link to={{pathname:`/employees/edit/${this.props.match.params.id}`, state:{employeeDetails: this.state.employeeDetails, departments: this.state.departments}}}>Edit</Link><br/><br/>
 

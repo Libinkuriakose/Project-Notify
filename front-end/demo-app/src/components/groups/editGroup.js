@@ -5,21 +5,23 @@ import { Redirect } from 'react-router-dom';
 class EditGroup extends React.Component {
     constructor(props) {
         super(props);
-        // console.log(this.props.location.state.group.group);
-
         this.state={
             nameOfGroup: this.props.location.state.group.group.groupName,
             privacy: this.props.location.state.group.group.privacy,
             members: this.props.location.state.group.group.members,
             posts: this.props.location.state.group.group.posts,
             events: this.props.location.state.group.group.events,
+            allEmployees:this.props.location.state.allEmployees,
             updatedMembersList: []
         }
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChangeText = this.handleChangeText.bind(this);
         this.handlePrivacy = this.handlePrivacy.bind(this);
         this.handleChange= this.handleChange.bind(this);
+        this.handleAdd=this.handleAdd.bind(this);
     }
+
+    
     handleChangeText(event) {
         event.preventDefault();
         this.setState({
@@ -61,6 +63,7 @@ class EditGroup extends React.Component {
             <div>
                 <form onSubmit={this.handleSubmit}>
                     <label>
+                        {console.log(this.props.location.state.allEmployees, "allemps")}
                         New Group Name: <input type="text" name="groupName" onChange={this.handleChangeText} value={this.state.nameOfGroup} /><br />
                     </label>
                     <label>
@@ -69,11 +72,26 @@ class EditGroup extends React.Component {
                                         <option value="private">Private </option>
                                         <option value="public">public</option></select><br /></div>
                     </label>
-                    <label>
-                        Members: {this.state.members.map((member, index) => {
-                            return <div key={index}><input onChange={this.handleChange} key={index} type="checkbox" value={member._id}>{member.bio.firstName}</input><br /></div>
+                    {/* {need to impliment for members it must show remove or show add button} */}
+                    {/* <label>{console.log(this.state.members, "members")}
+                        Remove/Existing Members:
+                        {this.state.members.map((member) => {
+                         this.state.allEmployees.map((employee, index) => {
+                             if(member==employee){
+                            return <div key={index}><input onChange={this.handleChange} key={index} type="checkbox" value={member._id}/>{member.bio.firstName}<br/></div>
+                             }else{
+                                return <div key={index}><input onChange={this.handleChange} key={index} type="checkbox" value={member._id}/>{member.bio.firstName}<br/></div>
+                             }
+                         })
                         })}
-                    </label><br/><br/>
+                    </label> */}
+                    {/* <label>
+                        Add New Membbers:{this.state.allEmployees.map((nonMember,index)=>{
+                            return <div key={index}><input onChange={this.handleAdd} key={index} type="checkbox" value={nonMember._id}/>{nonMember.bio.firstName}<br/></div>
+                        })}
+                    </label> */}
+                    
+                    <br/><br/>
                     <input type="submit" value="submit"/>
                 </form>
             </div>

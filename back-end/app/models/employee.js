@@ -39,10 +39,10 @@ const employeeSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Activity'
     }],
-    group: {
+    groups: [{
         type: Schema.Types.ObjectId,
         ref: 'Group'
-    }
+    }]
 });
 
 employeeSchema.post('save', function(next){

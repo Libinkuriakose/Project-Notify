@@ -22,6 +22,7 @@ class Groups extends React.Component {
                 employees:responseOfEmployee.data
 
             })
+            console.log(this.state.employees,"iii");
         })
     })
     }

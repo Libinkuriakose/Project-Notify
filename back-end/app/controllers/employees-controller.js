@@ -5,7 +5,7 @@ const {Department} = require('../models/department');
 
 //see all the employees
 router.get('/', (req, res) => {
-    Employee.find().populate('bio.department').populate('activities').then((employees) => {
+    Employee.find().populate('bio.department').populate('activities').populate('groups').then((employees) => {
         res.send(employees);
     }).catch((err) => {
         res.send(err);
@@ -14,7 +14,7 @@ router.get('/', (req, res) => {
 
 //find by id 
 router.get('/:id', (req, res) => {
-    Employee.findById(req.params.id).populate('bio.department').populate('activities').then((employee) => {
+    Employee.findById(req.params.id).populate('bio.department').populate('activities').populate('groups').then((employee) => {
         res.send({
             employee
         })

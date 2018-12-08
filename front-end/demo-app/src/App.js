@@ -12,7 +12,7 @@ import EditDepartment from '../src/components/departments/editDepartment';
 import Employee from './components/employee/employee';
 import EmployeeDetails from './components/employee/employeeDetails';
 import AddEmployee from './components/employee/addEmployee';
-
+import EditEmployeeDetails from './components/employee/editEmployee';
 const Index = () => (
   <div>
   <h2> Home </h2>
@@ -44,6 +44,7 @@ const AppRouter = () => (
       <Route path={`/groups/edit/:id`} component={EditGroup} exact/>
       <Route path={`/groups/:id/`} component={EachGroup} exact/>
       <Route path="/employees/new/" component= {AddEmployee} exact/>
+      <Route path="/employees/edit/:id" component= {EditEmployeeDetails} exact/>
         <Route path="/departments/new" component={AddDepartment} exact/>
         <Route path="/departments/:id" component={DepartmentDetails}  exact/> 
         <Route path="/departments/edit/:id" component={EditDepartment}  exact/>  

@@ -17,14 +17,16 @@ router.get('/', (req,res) => {
 
 
 
-//add a groups
+//add a group
+
+
 router.post('/', (req, res) => {
     let body = req.body;
     let group = new Group(body);
     group.save().then((group) => {
         res.send({
             group,
-            notice: 'group successfully added'
+            notice: 'successfully added group'
         });
     }).catch((err) => {
         res.send(err);
@@ -32,23 +34,47 @@ router.post('/', (req, res) => {
 });
 
 //update
-router.put('/:id',(req, res) => {
+// router.put('/:id',(req, res) => {
+//     let body = req.body;
+//     let id= req.params.id;
+//     Group.findOneAndUpdate({ _id: id},{ $set:
+//     body }, {new:true, runValidators: true})
+//     .then((group) => {
+//         if(!group){
+//             res.send({
+//                 notice: "group not found"
+//             });
+//         }
+//         res.send({
+//             group,
+//             notice:"updated Successfully"
+//         })
+//          }).catch((err) => {
+//     res.send(err);
+//     });
+// });
+//update a group
+router.put('/:id', (req, res) => {
+    let id = req.params.id;
     let body = req.body;
-    let id= req.params.id;
-    Group.findOneAndUpdate({ _id: id},{ $set:
-    body }, {new:true, runValidators: true})
-    .then((group) => {
+
+    Group.findOneAndUpdate({groupName: req.body.groupName}, {$pull:{members: {$in: req.body.selectedMembers}}}).then((res) => {
+        Employee.updateMany({_id: req.body.selectedMembers},{ $unset: {'bio.department': ""}}).then((res) => {
+            console.log(res);
+        })
+    });
+
+    Group.findOneAndUpdate({ _id: id}, { $set: body }, { new: true, runValidators: true }).populate('members').then((group) => {
         if(!group){
             res.send({
-                notice: "group not found"
+                notice: 'group not found'
             });
         }
         res.send({
             group,
-            notice:"updated Successfully"
-        })
-         }).catch((err) => {
-    res.send(err);
+            notice: 'Successfully updated group'
+        });
+        group.save();
     });
 });
 

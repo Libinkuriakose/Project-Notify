@@ -32,23 +32,36 @@ const groupSchema = new Schema({
 
 groupSchema.post('save', function(next){
     let allMembers = this.members;
-    console.log(allMembers);
+    let groupID= this._id;
 
     allMembers.forEach((memberID) => {
-        console.log(memberID)
         Employee.findById(memberID).then((employee) => {  
-            console.log(employee)
-            console.log(groupName)
 
-            if(!employee.includes(this.groupName)){
-                employee.group.push(this.groupName);   
+            if(!employee.groups.includes(groupID)){
+                employee.groups.push(groupID);   
                 employee.save();
             }  
         })
     });
     
-    next();
+   // next();
 })
+// groupSchema.post('save', function(next){
+//     let allMembers = this.members;
+//         allMembers.forEach((memberID)=>{
+//             Employee.findById(memberID).then((employee)=>{
+//                 if(employee)
+//             })           ///////////////editing
+//         })
+//         let departmentId = this.bio.department;
+//         if(departmentId){
+//         Department.findById(departmentId).populate('department').then((department) => {
+//             department.members.push(memberId);
+//             department.save();
+//         })
+//     }
+//     //next();
+// })
 
 const Group=mongoose.model('Group',groupSchema);
 
