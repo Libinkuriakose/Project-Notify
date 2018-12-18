@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 const { Employee } = require('./employee');
 const { Department } = require('./department');
 const { Activity } = require('./activity');
+delete mongoose.connection.models['Group'];
 
 
 const groupSchema = new Schema({

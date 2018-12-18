@@ -12,19 +12,14 @@ class Employee extends React.Component {
     }
 
     componentDidMount() {
-        axios.get('http://localhost:3001/employees').then((responseFromEmployees) => {console.log(responseFromEmployees,"response")
+        axios.get('http://localhost:3001/employees').then((responseFromEmployees) => {
             axios.get('http://localhost:3001/departments').then((responseFromDepartments) => {
                 this.setState({
                     employees: responseFromEmployees.data,
                     departments: responseFromDepartments.data
                 })
             }) 
-        }).catch((err)=>{
-            console.log(err,err.message,"employee-catch");
-
         })
-        
-        console.log(this.state.employees,"employee-axioscall")
     }
 
     render() {
@@ -35,7 +30,7 @@ class Employee extends React.Component {
                        <Link to={{pathname:`/employees/${employee._id}`, state: {details: employee, departments: this.state.departments}}}>{employee.bio.firstName}</Link>
                     </li>)
                 )}
-                <Link to={{pathname:"/employees/new/", state:{departments: this.state.departments}}}>Add employee</Link>
+                <Link to={{pathname:"/employees/new", state:{departments: this.state.departments}}}>Add employee</Link>
             </div>
         )
     }

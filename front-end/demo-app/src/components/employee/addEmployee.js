@@ -6,39 +6,67 @@ class AddEmployee extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-                firstNameOfEmployee: '',
-                lastNameOfEmployee: '',
-                departmentofEmployee: '',  
-                bio: '',
-                listOfDepartments:this.props.location.state.departments,
-                redirect: false  
+            firstNameOfEmployee: ``,
+            firstNameError: ``,
+            lastNameOfEmployee: ``,
+            lastNameError: ``,
+            departmentofEmployee: ``,
+            departmentError: ``,  
+            bio: '',
+            redirect: false,
+            departments: this.props.location.state.departments,
         }
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChangeFirstName = this.handleChangeFirstName.bind(this);
         this.handleChangeLastName = this.handleChangeLastName.bind(this);
-        this.handleSelectDepartment = this.handleSelectDepartment.bind(this);
+        this.handleChangeDepartment = this.handleChangeDepartment.bind(this);
     }
 
+    validate = () => {
+        let isError = false;
+        const errors = {
+            firstNameError: ``,
+            lastNameError: ``,
+            departmentError: ``
+        }
 
-        
+        if(this.state.firstNameOfEmployee.length < 3){
+            console.log(this.state.firstNameOfEmployee);
+            isError = true;
+            errors.firstNameError = 'first name should be atleast three characters long';
+        }
+
+        if(this.state.lastNameOfEmployee.length < 1){
+            isError = true;
+            errors.lastNameError = 'last name should have atleast one character';
+        }
+
+        if(this.state.departmentofEmployee == ''){
+            errors.departmentError = 'select a department'
+        }
+
+        this.setState({
+            ...this.state,
+            ...errors
+        })
+
+        return isError;
+    }
 
     handleChangeFirstName(event) {
-        console.log(event.target.value);
         event.preventDefault();
         this.setState({
             firstNameOfEmployee: event.target.value
         })
     }
 
-    handleSelectDepartment(event) {
+    handleChangeDepartment(event) {
         this.setState({
             departmentofEmployee: event.target.value
         })
     }
 
     handleChangeLastName(event) {
-        console.log(event.target.value);
-
         event.preventDefault();
         this.setState({
             lastNameOfEmployee: event.target.value   
@@ -47,25 +75,29 @@ class AddEmployee extends React.Component {
 
     handleSubmit(event){
         event.preventDefault();
-        let submitValue = {
-            bio: {
-                firstName: this.state.firstNameOfEmployee,
-                lastName: this.state.lastNameOfEmployee,
-                department: this.state.departmentofEmployee
-            }
-        }
-        {console.log(submitValue,"submit value")}
-
-       
-        axios.post('http://localhost:3001/employees', submitValue).then((response) => {
+        const err = this.validate();
+        if(!err){
             this.setState({
-                redirect: true
-            });
-        })       
+                firstNameError: ``,
+                lastNameError: ``,
+                departmentError: ``
+            })
+            let submitValue = {
+                bio: {
+                    firstName: this.state.firstNameOfEmployee,
+                    lastName: this.state.lastNameOfEmployee,
+                    department: this.state.departmentofEmployee
+                }
+            }
+            axios.post('http://localhost:3001/employees', submitValue).then((response) => {
+                this.setState({
+                    redirect: true
+                });
+            })   
+        }
+            
     }
 
-   
-   
     render() {
         //redirecting to employees page after adding a department
         const { redirect } = this.state;
@@ -77,28 +109,22 @@ class AddEmployee extends React.Component {
                 <form onSubmit={this.handleSubmit}>
                     <label>
                         First Name: <br/>
-                        <input type="text" name="FirstName" onChange={this.handleChangeFirstName} value={this.state.firstName}/><br/>
-                    </label> 
-
+                        <input type="text" errortext={this.state.firstNameError} name="FirstName" onChange={this.handleChangeFirstName} value={this.state.firstNameOfEmployee}/><br/>
+                    </label><span>{this.state.firstNameError}</span> 
                     <label>
                         Last Name<br/>
-                        <input type="text" name="lastName" onChange={this.handleChangeLastName} value={this.state.lastName}/><br/>
-                    </label>
-
+                        <input type="text" name="lastName" errortext={this.state.lastNameError} onChange={this.handleChangeLastName} value={this.state.lastNameOfEmployee}/><br/>
+                    </label><span>{this.state.lastNameError}</span>
                     <label>
-                         Select The Department<br/>
-                         <select name="selectDepartment" onClick={this.handleSelectDepartment}>
-                         <option>Select</option>
-                         {this.state.listOfDepartments.map((department,index)=>{
-                        // let employeeID=this.state.members.find(memberID=>memberID==employee._id)
-                        // if(!employeeID){
-                           return <option key={index} value={department._id}>{department.departmentName} </option>
-                    })}
-                    </select>
-                         </label> 
+                        <div>
+                            <select errortext={this.state.departmentError} onClick={this.handleChangeDepartment}>{
+                                this.state.departments.map((department, index) => {
+                                    return <option key={index} value={department._id}>{department.departmentName}</option>
+                                })
+                            }</select>
+                        </div><span>{this.state.departmentError}</span><br/>
                         <input type="submit" value="submit"/>
-                   
-
+                    </label>
                 </form>    
                 <Link to="/employees">back</Link>
             </div>

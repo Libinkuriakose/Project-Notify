@@ -3,11 +3,13 @@ const router = express.Router();
 const { Employee } = require('../models/employee');
 const { Department } = require('../models/department');
 const { Activity } = require('../models/activity');
+const { Group } = require('../models/activity');
+
 
 
 //see all the activities
 router.get('/', (req, res) => {
-    Activity.find().populate('departments').populate('participants').then((activities) => {
+    Activity.find().populate('departments').populate('participants').populate('groups').then((activities) => {
         res.send(activities);
     }).catch((err) => {
         res.send(err);
@@ -35,7 +37,15 @@ router.put('/:id', (req, res) => {
     let id = req.params.id;
     let participantsToBeRemoved = req.body.participantsToBeRemoved;
     let departmentsToBeRemoved = req.body.departmentsToBeRemoved;
-
+    let groupsToRemove=req.body.groupsToRemove;
+    if(groupsToRemove){
+        Activity.findOneAndUpdate({_id:id},{$pull:{groups:{$in:groupsToRemove}}}).then((activity)=>{
+            console.log(activity,"removed group");
+        });
+        Group.updateMany({_id: groupsToRemove},{$pull:{activities:id}}).then((groups)=>{
+            console.log(groups,"removed groups from this activity");
+        })
+    }
     if(participantsToBeRemoved){
         Activity.findOneAndUpdate({ _id: id}, {$pull: {participants: {$in: participantsToBeRemoved}}}).then((activity) => {
             console.log(activity, "removed particpants");
