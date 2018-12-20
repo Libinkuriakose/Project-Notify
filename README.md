@@ -62,7 +62,9 @@ This project enables the user to create departments, add employees to that depar
   - Change the details and update.
 - delete '/activities/:id'
   - Delete the activity and remove the same form departments and employees who would have been added to it.
-#`Front-End`
+  
+# FrontEnd  
+  
 ## `create, edit and delete Department`
 - Department
   - See the list of departments, to see more about each department click on visit this department.
