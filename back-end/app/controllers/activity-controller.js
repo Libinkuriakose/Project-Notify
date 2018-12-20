@@ -6,7 +6,6 @@ const { Activity } = require('../models/activity');
 const { Group } = require('../models/activity');
 
 
-
 //see all the activities
 router.get('/', (req, res) => {
     Activity.find().populate('departments').populate('participants').populate('groups').then((activities) => {
