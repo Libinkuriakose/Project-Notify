@@ -4,6 +4,7 @@ const { Department } = require('../models/department');
 const { Employee } = require('../models/employee');
 const _= require('lodash');
 const { Post } = require('../models/post');
+const {mongoose_delete}=require('mongoose-delete')
 
 //see all of departments
 router.get('/', (req, res) => {

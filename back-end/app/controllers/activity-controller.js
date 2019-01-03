@@ -3,7 +3,7 @@ const router = express.Router();
 const { Employee } = require('../models/employee');
 const { Department } = require('../models/department');
 const { Activity } = require('../models/activity');
-const { Group } = require('../models/activity');
+const { Group } = require('../models/group');
 
 
 //see all the activities
@@ -32,7 +32,7 @@ router.post('/', (req, res) => {
 //update an activity
 router.put('/:id', (req, res) => {
     let body = req.body;
-    console.log(body);
+    console.log();
     let id = req.params.id;
     let participantsToBeRemoved = req.body.participantsToBeRemoved;
     let departmentsToBeRemoved = req.body.departmentsToBeRemoved;

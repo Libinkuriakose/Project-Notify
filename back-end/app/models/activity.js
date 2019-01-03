@@ -5,7 +5,6 @@ const { Employee } = require('./employee');
 const {Group} =require('./group')
 delete mongoose.connection.models['Activity'];
 
-
 const activitySchema = new Schema({
     activityName: {
         type: String,
