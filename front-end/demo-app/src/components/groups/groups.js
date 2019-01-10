@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import {Link} from "react-router-dom";
-
+import { Card, CardImg, CardText, CardBody, CardTitle, CardSubtitle, Button, Row, Col, CardDeck, NavLink } from 'reactstrap';
 
 
 class Groups extends React.Component {
@@ -29,15 +29,30 @@ class Groups extends React.Component {
 
     render() {
         return (
-            <div>
-                {this.state.groups.map((group, index) => (
-                    <li key={index}> 
-                       <Link to= {{pathname:`/groups/${group._id}`,state:{group:group,employees:this.state.employees}}}>{group.groupName}</Link>
-                    </li>
-                    )
-                )}
-    
-                <Link to={{pathname:"/groups/new/create",state:{employees:this.state.employees}}}>Create Group</Link>
+            <div className="container">
+             <div class="row">
+               <div class="col-md-8" style={{height:"600px",overflow:"scroll"}}>
+                {this.state.groups.map((group, index) =>{
+                return (<Row key={index} className="row justify-content-md-center">
+                       <Col sm="6">
+                        <Card body  outline color="primary" style={{width:"150%", height:"93%", borderColor: 'primary' }} >
+                        <CardTitle className="row justify-content-md-center">{group.groupName.toUpperCase()}</CardTitle>
+                        <Button color="white">
+                        <Link to= {{pathname:`/groups/${group._id}`,state:{group:group,employees:this.state.employees}}} >More...
+                        </Link>
+                        </Button>
+                        </Card>
+                        </Col>
+                        </Row>)
+                })}
+                </div>
+
+               <div class="col-md-4">
+               <br/>
+                <br/><br/><br/>
+               <Button outline color="primary"  background="success"><Link to={{pathname:"/groups/new/create",state:{employees:this.state.employees}}}>Create Group</Link> </Button>
+               </div>
+             </div>
             </div>
         )
     }

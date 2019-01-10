@@ -1,13 +1,17 @@
 import React from 'react';
 import axios from 'axios';
 import {Redirect, Link} from 'react-router-dom';
+import { Button, Form, FormGroup, Label, Input, FormText, Alert } from 'reactstrap';
+
 
 class AddDepartment extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             nameOfTheDepartment: ``,
+            nameError: ``,
             aboutTheDepartment: ``,
+            aboutError: ``,
             redirect: false
         }
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -15,7 +19,31 @@ class AddDepartment extends React.Component {
         this.handleChangeAbout = this.handleChangeAbout.bind(this);
     }
 
-    
+    validate = () => {
+        let isError = false;
+        const errors = {
+            nameError: ``,
+            aboutError: ``
+        }
+
+        if(this.state.nameOfTheDepartment.length < 3){
+            isError = true;
+            errors.nameError = 'name of the department should be atleast 3 characters long';
+        }
+
+        if(this.state.aboutTheDepartment.length < 5){
+            isError = true;
+            errors.aboutError = 'information about the department should be atleast 5 characters long';
+        }  
+
+        this.setState({
+            ...this.state,
+            ...errors
+        })
+
+        return isError;
+    }
+
     handleChangeText(event) {
         event.preventDefault();
         this.setState({
@@ -32,19 +60,23 @@ class AddDepartment extends React.Component {
 
     handleSubmit(event){
         event.preventDefault();
-        let submitValue ={
-            departmentName: this.state.nameOfTheDepartment,
-            about: this.state.aboutTheDepartment
-        }
-        axios.post('http://localhost:3001/departments', submitValue).then((response) => {
-            const newDepartment = [...this.state.nameOfTheDepartment, response.data];
-            this.setState(prevState => ({
-                nameOfTheDepartment: newDepartment
-            }))
+        const err = this.validate();
+        console.log(err,"err");
+        if(!err){
             this.setState({
-                redirect: true
-            });
-        })       
+                nameError: ``,
+                aboutError: ``
+            })
+            let submitValue = {
+                departmentName: this.state.nameOfTheDepartment,
+                about: this.state.aboutTheDepartment
+            }
+            axios.post('http://localhost:3001/departments', submitValue).then((response) => {
+                this.setState({
+                    redirect: true
+                });
+            })      
+        } 
     }
 
    
@@ -56,19 +88,22 @@ class AddDepartment extends React.Component {
             return <Redirect to="/departments/" exact />
         }
         return (
-            <div>
-                <form onSubmit={this.handleSubmit}>
-                    <label>
-                        Department Name: <br/>
-                        <input type="text" name="departmentName" onChange={this.handleChangeText} value={this.state.departmentName}/><br/>
-                    </label> 
-                    <label>
-                        About:<br/>
-                        <input type="textarea" onChange={this.handleChangeAbout} value={this.state.about}/><br/>
-                        <input type="submit" value="submit"/>
-                    </label>    
-                </form>    
-                <Link to="/departments">back</Link>
+            <div className="row justify-content-md-center"> 
+                <Form onSubmit={this.handleSubmit}>
+                    <FormGroup>
+                        <Label for="name">Department Name</Label>
+                        <Input type="text" errortext={this.state.nameError} id="name" name="name" onChange={this.handleChangeText} value={this.state.departmentName}/><br/>
+                    </FormGroup>
+                    {this.state.nameError?<Alert color="primary">{this.state.nameError}</Alert>: ``}
+                    <FormGroup>
+                    <Label for="about">About</Label>     
+                        <Input type="textarea" errortext={this.state.aboutError} onChange={this.handleChangeAbout} value={this.state.about}/><br/>
+                    </FormGroup> 
+                    {this.state.aboutError?<Alert color="primary">{this.state.aboutError}</Alert>: ``}
+
+                    <Button type="submit" color="primary" value="submit">submit</Button><br/><br/>
+                    <Link to="/departments">back</Link>
+                </Form> 
             </div>
         )
         

@@ -30,22 +30,24 @@ class EachGroup extends React.Component {
             return <Redirect to="/groups/" exact/>
         }
         return (
-
-            <div>
-                {console.log(this.props.location.state)}
-
-              <li>Name:{this.state.eachgroup.group.groupName}</li>
-              <li>Privacy:{this.state.eachgroup.group.privacy}</li>
-              <li>Events:{this.state.eachgroup.group.events}</li>
-              <li>Posts:{this.state.eachgroup.group.posts}</li>
-              <li>Members:{this.state.eachgroup.group.members.map((member,index)=>{
-                  return <Link key={index} to={`/groups/${member._id}`}><ul key={index}>{member.bio.firstName}</ul></Link>
-                            })
-                        }
-                </li>
-                <Link to={`/groups/${this.props.match.params.id}`} onClick={this.deleteHandle}>Delete</Link><br />
-                <Link to={{pathname:`/groups/edit/${this.props.match.params.id}`,state:{group:this.state.eachgroup,allEmployees:this.state.allEmployees}}} >Edit</Link><br />
-                <Link to="/groups">back</Link>
+            <div className="container"><br/>
+            <div className="row">
+            <div className="col-sm-2"><br/>
+              Name</div><div className="col-sm-1"><br/>:</div><div className="col-sm-9"><br/>{this.state.eachgroup.group.groupName}</div></div><br/>
+              <div className="row"><div className="col-sm-2"> 
+              Privacy</div><div className="col-sm-1">:</div><div className="col-sm-9">{this.state.eachgroup.group.privacy}</div></div><br/>
+              <div className="row"><div className="col-sm-2">Events</div><div className="col-sm-1">:</div><div className="col-sm-9">{this.state.eachgroup.group.events}</div></div><br/>
+              <div className="row"><div className="col-sm-2">Posts</div><div className="col-sm-1">:</div><div className="col-sm-9">{this.state.eachgroup.group.posts}</div></div><br/>
+              <div className="row"><div className="col-sm-2">Members</div><div className="col-sm-1">:</div><div className="col-sm-9" ><div className="row"><div className="col-sm-6" style={{height:"300px",overflow:"scroll"}}>{this.state.eachgroup.group.members.map((member,index)=>{
+                  return <li key={index}>{member.bio.firstName} {member.bio.lastName}</li>
+                            })  }
+                </div></div></div></div>
+                <div className="row"><div className="col-sm-2">
+                <Link to={`/groups/${this.props.match.params.id}`} onClick={this.deleteHandle}>Delete</Link></div>
+                <div className="col-sm-2">
+                <Link to={{pathname:`/groups/edit/${this.props.match.params.id}`,state:{group:this.state.eachgroup,allEmployees:this.state.allEmployees}}} >Edit</Link></div>
+                <div className="col-sm-2">
+                <Link to="/groups">back</Link></div></div>
             </div>
         )
     }

@@ -1,6 +1,8 @@
 import React from 'react';
 import axios from 'axios';
 import { Link,Redirect } from 'react-router-dom';
+import { Form,FormGroup,Label,Input, CardText, CardBody, CardTitle, CardSubtitle, Button, Row, Col, CardDeck, NavLink } from 'reactstrap';
+
 
 
 class EditGroup extends React.Component {
@@ -8,6 +10,7 @@ class EditGroup extends React.Component {
         super(props);
         this.state={
             nameOfGroup: this.props.location.state.group.group.groupName,
+            groupError:``,
             privacy: this.props.location.state.group.group.privacy,
             members: this.props.location.state.group.group.members,
             posts: this.props.location.state.group.group.posts,
@@ -20,16 +23,39 @@ class EditGroup extends React.Component {
         this.handleChangeText = this.handleChangeText.bind(this);
         this.handlePrivacy = this.handlePrivacy.bind(this);
         this.handleChange= this.handleChange.bind(this);
-        this.handleRemove=this.handleRemove.bind(this);
+        // this.handleRemove=this.handleRemove.bind(this);
     }
 
-    handleRemove(event){
-        this.state.updatedMembersList.forEach((memberID)=>{
-            if(memberID==event.target.value){
-                this.state.updatedMembersList.splice((this.state.updatedMembersList.indexOf(memberID)))
-            }
-        });
-        console.log(this.state.updatedMembersList,'updatedlistOFsplice')
+    // validate=()=>{
+    //     let isError=false;
+    //     const errors={
+    //         groupNameError:``,
+    //         privacyError:``
+    //     }
+
+    //     if(this.state.nameOfGroup.length<3){
+    //         isError=true;
+    //         errors.groupNameError=`Group name should be atleast 3 characters long`
+    //     }
+    //     if(this.state.privacy.length==0){
+    //         isError=true;
+    //         errors.privacyError=`Select a privacy mode`
+    //     }
+    //     this.setState({
+    //         ...this.state,
+    //         ...errors
+    //     })
+    //     return isError;
+    // }
+
+    handleChange(event){
+        console.log(this.state.updatedMembersList,"event")
+        if(this.state.updatedMembersList.find(elementID=>elementID==event.target.value)){
+                this.state.updatedMembersList.splice((this.state.updatedMembersList.indexOf(event.target.value)),1)
+        }else{
+            this.state.updatedMembersList.push(event.target.value)
+        }
+        console.log(this.state.updatedMembersList,'www')
     }
     handleChangeText(event) {
         event.preventDefault();
@@ -44,23 +70,35 @@ class EditGroup extends React.Component {
             privacy: event.target.value
         })
     }
-    handleChange(event) {
-        this.state.updatedMembersList.push(event.target.value)
+    // handleChange(event) {
+    //     console.log("executing else event")
+    //     if(this.state.updatedMembersList.find(elementID=>elementID==event.target.value)){
+    //     this.state.updatedMembersList.push(event.target.value)
+    //     }
+    //     console.log(this.state.updatedMembersList,"pushing at else part eventhandler")
         
-    }
+    // }
     handleSubmit(event){
         event.preventDefault();
-        let submitValue={
-            groupName:this.state.nameOfGroup,
-            members:this.state.updatedMembersList,
-            privacy:this.state.privacy
-        }
-        console.log(submitValue,"submitvalue");
-        axios.put(`http://localhost:3001/groups/${this.props.match.params.id}`, submitValue).then((response) => {
+        if(this.props.location.state.group.group.groupName!=this.state.nameOfGroup||this.props.location.state.group.group.privacy!=this.state.privacy||this.props.location.state.group.group.members!=this.state.updatedMembersList){
+            let submitValue={
+                groupName:this.state.nameOfGroup,
+                privacy:this.state.privacy,
+                members:this.state.updatedMembersList
+            }
+            console.log(submitValue,"submitvalue");
+            axios.put(`http://localhost:3001/groups/${this.props.match.params.id}`, submitValue).then((response) => {
+                this.setState({
+                    redirect: true
+                });
+                console.log(submitValue,"submitvalue2");
+
+            })
+        }else{
             this.setState({
-                redirect: true
-            });
-        })
+                groupError:`Please commit any changes for a successful submit`
+            })
+        }
     }
 
     render() {
@@ -69,60 +107,42 @@ class EditGroup extends React.Component {
             return <Redirect to="/groups/" exact />
         }
         return (
-            <div>
-                {console.log(this.props.location.state.group.group._id,"iiiiiiiiiiiiii")}
-                <form onSubmit={this.handleSubmit}>
-                    <label>
-                        {console.log(this.props.location.state.allEmployees, "allemps")}
-                        New Group Name: <input type="text" name="groupName" onChange={this.handleChangeText} value={this.state.nameOfGroup} /><br />
-                    </label>
-                    <label>
-                        Change privacy: <div><select name="groupName" onClick={this.handlePrivacy}>
+            <div className="container"><br/><br/>
+            <div className="row"><div className="col-sm-11">
+                <Form onSubmit={this.handleSubmit}>
+                <div className="row"><div className="col">
+                <FormGroup>
+                    <Label> New Group Name</Label>
+                    <Input type="text" errortext={this.state.groupNameError} name="groupName" onChange={this.handleChangeText} value={this.state.nameOfGroup} /><br />
+                    </FormGroup></div></div>
+                    <FormGroup>
+                    <div className="row"><div className="col-sm-3">
+                    <Label>Change privacy</Label> </div><div className="col-sm-9">
+                    <div><select errortext={this.state.privacyError} name="privacy" onClick={this.handlePrivacy}>
                                         <option>select</option>
                                         <option value="private">Private </option>
-                                        <option value="public">public</option></select><br /></div>
-                    </label>
-                    <label>
-                         All Members:
-                        
+                                        <option value="public">public</option></select><br /></div></div></div>
+                    </FormGroup><FormGroup>
+                    <div className="row"><div className="col-sm-3">
+                    <Label> All Members</Label></div><div className="col-sm-9" style={{height:"300px",overflow:"scroll"}}>
+                    <div className="row"><div className="col offset-1">
                     {this.state.allEmployees.map((employee, index) => {
-
-                        if(this.state.members.length==0){
-                            console.log("1");
-                           return this.state.allEmployees.map((nonMember)=>{
-                                return <div key={index}><input onChange={this.handleChange} key={index} type="checkbox" value={nonMember._id}/>{nonMember.bio.firstName}<br/></div>
-                            })
-                        }else{
-                             return this.state.members.map((member) => {
-                                 if(member._id==employee._id){
-                                    console.log("2");
-                                     console.log(member,employee,"if");
-
-
-                                     if(this.state.updatedMembersList.find(elements=>elements._id==employee._id))
-                                     this.state.updatedMembersList.push(employee._id)
-                                     console.log(this.state.updatedMembersList);
-
-                                        return (<div key={index}><input onClick={this.handleRemove} key={index}                     type="checkbox" value={member._id}/>Remove:{member.bio.firstName}<br/></div>)
-
-                                    }else{
-                                        console.log("3");
-
-                                        console.log(employee,"else");
-                                            return <div key={index}><input onChange={this.handleChange} key={index} type="checkbox" value={employee._id}/>{employee.bio.firstName}<br/></div>
+                                if(this.state.members.find(element=>element._id==employee._id)){
+                                        if(employee.groups.find(group=>group._id==this.state.group._id)){
+                                    this.state.updatedMembersList.push(employee._id)
                                     }
-                                })
-                            }
-                        })
-                    
-                        }
-                    </label>
-                    
-                    <br/><br/>
-                    <input type="submit" value="submit"/><br/><br/>
+                                    return ( <div  key={`i${index}`}><Input  onClick={this.handleChange} key={index} type="checkbox" value={employee._id}/>Remove:{employee.bio.firstName}<br/></div>)
+                                }else{
+                                    return <div key={`i2${index}`}><Input  onChange={this.handleChange} key={index} type="checkbox" value={employee._id}/>{employee.bio.firstName}<br/></div>
+                                }
+                            })}</div></div></div></div>
+                    </FormGroup><div className="row"><div className="col"><FormGroup>
+                    <Button outline color="primary" style={{width:"100%"}} value="submit">Submit</Button>
+                    <span style={{color:"red"}}>{this.state.groupError}</span><br/><br/></FormGroup></div></div>
+                </Form></div>
+                <div className="col-sm-1">
                     <Link to="/groups">back</Link>
-                </form>
-            </div>
+                    </div></div></div>
         )
     }
 }

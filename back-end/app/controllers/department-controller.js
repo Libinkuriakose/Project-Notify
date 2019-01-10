@@ -3,6 +3,7 @@ const router = express.Router();
 const { Department } = require('../models/department');
 const { Employee } = require('../models/employee');
 const _= require('lodash');
+const { Post } = require('../models/post');
 
 //see all of departments
 router.get('/', (req, res) => {
@@ -71,6 +72,13 @@ router.get('/name', (req, res) => {
     });
 });
 
+//find posts belonging to a department
+router.get('/posts/:id', (req, res) => {
+    let id = req.params.id;
+    Post.find({department: id}).then((posts) => {
+        res.send(posts);
+    });
+});
 
 //delete a department
 router.delete('/:id', (req, res) => {

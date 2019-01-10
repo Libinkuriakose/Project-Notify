@@ -30,3 +30,12 @@
     transform: rotate(360deg);
   }
 }
+.login-register{
+  overflow: scroll; 
+  padding: 5% 0; 
+}
+
+.anyClass {
+  height:250px;
+  overflow-y: scroll;
+}

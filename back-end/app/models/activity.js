@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const { Department }  = require('./department');
 const { Employee } = require('./employee');
+const {Group} =require('./group')
 delete mongoose.connection.models['Activity'];
 
 
@@ -22,6 +23,10 @@ const activitySchema = new Schema({
     departments: [{
         type: Schema.Types.ObjectId,
         ref: 'Department'
+    }],
+    groups:[{
+        type:Schema.Types.ObjectId,
+        ref: 'Group'
     }],
     venue: {
         type: String,
@@ -47,6 +52,7 @@ activitySchema.post('save', function(next){
     let activityId = this._id;
     let departmentId = this.departments;
     console.log(departmentId);
+    let groups=this.groups
     let participants = this.participants;
     Employee.updateMany({_id: {$in: participants}}, {$push: {activities: activityId}}).then((participants) => {        
         console.log(participants); 
@@ -56,6 +62,10 @@ activitySchema.post('save', function(next){
     }).catch((err) => {
         console.log(err);
     })
+    Group.updateMany({_id:{$in:groups}},{$push:{activities:activityId}}).then((updatedGroups)=>{
+        console.log(updatedGroups);
+    })
+
 });
 
 
