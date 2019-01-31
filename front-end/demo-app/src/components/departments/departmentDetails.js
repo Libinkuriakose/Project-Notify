@@ -4,6 +4,8 @@ import { Link, Redirect } from 'react-router-dom';
 import { Badge, Alert, Card, CardText, Button, Input, Form, FormGroup, Row, Col, Label} from 'reactstrap';
 import  ApplauseButton from '../applauseButton';
 import AddPost from '../addPost';
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css'
 import './departmentDetails.css'
 
 class DepartmentDetails extends React.Component {
@@ -58,12 +60,30 @@ class DepartmentDetails extends React.Component {
     }
 
     deleteHandle(){
-        axios.delete(`http://localhost:3001/departments/${this.props.match.params.id}`).then((response) => {
-             this.setState({
-                redirect: true
-            })
-        }); 
+            confirmAlert({
+        title: 'Confirm to submit',
+        message: 'Are you sure to do this.',
+        buttons: [
+        {
+          label: 'Yes',
+          onClick: () => {
+              axios.delete(`http://localhost:3001/departments/${this.props.match.params.id}`).then((response) => {
+            this.setState({
+               redirect: true
+           })
+       }); 
     }
+        },
+        {
+          label: 'No',
+          onClick: () => alert('Cancelled')
+        }
+      ]
+            })
+        
+    
+    }
+    
 
         handleAddPost(posts) {
             this.state.posts.unshift(posts)

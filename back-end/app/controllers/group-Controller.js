@@ -5,7 +5,6 @@ const {Activity} = require('../Models/activity')
 const { Employee } = require('../models/employee');
 const { Department } = require('../models/department');
 
-
 //see list of groups
 router.get('/', (req,res) => {
     Group.find().populate('members').populate('activities').then((groups) => {
@@ -65,16 +64,19 @@ router.put('/:id', (req, res) => {
     });
 
     Group.findOneAndUpdate({ _id: id}, { $set: body }, { new: true, runValidators: true }).populate('members').then((group) => {
-        if(!group){
+        Employee.updateMany({_id: req.body.members},{$push:{groups:group._id}},).then((employee)=>{
+            if(!group){
+                res.send({
+                    notice: 'group not found'
+                });
+            }
             res.send({
-                notice: 'group not found'
+                group,
+                notice: 'Successfully updated group'
             });
-        }
-        res.send({
-            group,
-            notice: 'Successfully updated group'
-        });
-        group.save();
+            group.save();   
+        })
+        
     });
 });
 

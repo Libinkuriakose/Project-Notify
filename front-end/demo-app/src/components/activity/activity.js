@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';    
+import { Link } from 'react-router-dom';   
+import strftime from 'strftime'
 import { Alert,Card, CardImg, CardText, CardBody, CardTitle, CardSubtitle, Button, Row, Col, CardDeck, NavLink, Label } from 'reactstrap';
 
 class Activity extends React.Component {
@@ -11,6 +12,7 @@ class Activity extends React.Component {
             employees: [],
             departments: [],
             groups:[],
+            formatedDate:``
         }
     }
 
@@ -40,6 +42,11 @@ class Activity extends React.Component {
             })
         })
             
+        // let date = new Date(this.state.activities.schedule.date);
+        //     this.setState({
+        //         formatedDate: strftime(`%B %d %Y`, date)
+        //     })
+            
 
     }
 
@@ -62,7 +69,7 @@ class Activity extends React.Component {
                    <div className="row">
                     <div className="col">
                     <Alert className="row justify-content-md-center" color="secondary">                    
-                    {activity.schedule.date}</Alert>
+                    {strftime(`%A %d %B %Y`,new Date(activity.schedule.date))}</Alert>
                     </div>
                     </div>
                     <div className="row">
